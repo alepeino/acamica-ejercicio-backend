@@ -1,19 +1,18 @@
 const express = require('express')
-const vistas = require('./vistas')
 
 const PORT = 3000
 const app = express()
+
+app.set('view engine', 'ejs')
 
 // endpoint "home"
 app.get('/', (req, res) => {
   res.send('Ok')
 })
 
-
 // endpoint que envía el formulario de crear post
 app.get('/nuevo', (req, res) => {
-  res.set('Content-Type', 'text/html')
-  res.send(vistas.vistaForm())
+  res.render('form')
 })
 
 // middleware que maneja las peticiones
@@ -31,8 +30,7 @@ app.use((err, req, res, next) => {
     status: err.status || 500,
     mensaje: err.mensaje || err.message
   }
-  res.set('Content-Type', 'text/html')
-  res.status(err.status).send(vistas.vistaError(error))
+  res.render('error', { error })
 })
 
 app.listen(PORT, () => console.log('Server en puerto ' + PORT))
