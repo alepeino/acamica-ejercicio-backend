@@ -14,8 +14,10 @@ app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }))
 
 // endpoint "home"
-app.get('/', (req, res) => {
-  res.send('Ok')
+app.get('/', (req, res, next) => {
+  fsPromises.readDir(POSTS_DIR)
+    .then(posts => res.render('home', { posts }))
+    .catch(error => next(error))
 })
 
 // endpoint que envía el formulario de crear post
