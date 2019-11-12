@@ -1,14 +1,12 @@
 const express = require('express')
-const fs = require('fs')
+const fsPromises = require('./fs-promises')
 
 const PORT = 3000
 const POSTS_DIR = 'posts'
 
 const app = express()
 
-if (!fs.existsSync(POSTS_DIR)) {
-  fs.mkdirSync(POSTS_DIR)
-}
+fsPromises.ensureDir(POSTS_DIR)
 
 app.set('view engine', 'ejs')
 
@@ -27,16 +25,9 @@ app.get('/nuevo', (req, res) => {
 
 // endpoint que guarda el post
 app.post('/nuevo', (req, res, next) => {
-  fs.writeFile(
-    POSTS_DIR + '/' + req.body.titulo,
-    req.body.cuerpo,
-    (err, data) => {
-      if (err) {
-        return next(err)
-      }
-      res.redirect('/')
-    }
-  )
+  fsPromises.writeFile(POSTS_DIR + '/' + req.body.titulo, req.body.cuerpo)
+    .then(() => res.redirect('/'))
+    .catch(err => next(err))
 })
 
 // middleware que maneja las peticiones
