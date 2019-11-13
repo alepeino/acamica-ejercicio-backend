@@ -18,6 +18,18 @@ function readDir(dir) {
   })
 }
 
+function readFile(file) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, (err, data) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(data)
+      }
+    })
+  })
+}
+
 function writeFile(file, contents) {
   return new Promise((resolve, reject) => {
     fs.writeFile(file, contents, (err, data) => {
@@ -33,5 +45,6 @@ function writeFile(file, contents) {
 module.exports = {
   ensureDir,
   readDir,
+  readFile,
   writeFile
 }

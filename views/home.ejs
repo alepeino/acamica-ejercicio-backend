@@ -13,7 +13,9 @@
         <% posts.forEach(function (post) { %>
             <div>
                 <h2>
-                    <%= post %>
+                    <a href="posts/<%= post %>">
+                        <%= post %>
+                    </a>
                 </h2>
             </div>
         <% }) %>

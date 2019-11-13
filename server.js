@@ -32,6 +32,14 @@ app.post('/nuevo', (req, res, next) => {
     .catch(err => next(err))
 })
 
+// endpoint de vista de detalle de un post
+app.get('/posts/:id', (req, res, next) => {
+  const titulo = req.params.id
+  fsPromises.readFile(POSTS_DIR + '/' + titulo)
+    .then(cuerpo => res.render('post', { post: { titulo, cuerpo }}))
+    .catch(err => next(err))
+})
+
 // middleware que maneja las peticiones
 // que no matchean con las rutas declaradas.
 // genera un error, se le pasa al manejador con `next`
