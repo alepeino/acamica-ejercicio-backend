@@ -1,12 +1,9 @@
 const express = require('express')
-const fsPromises = require('./fs-promises')
+const Post = require('./models/Post')
 
 const PORT = 3000
-const POSTS_DIR = 'posts'
 
 const app = express()
-
-fsPromises.ensureDir(POSTS_DIR)
 
 app.set('view engine', 'ejs')
 
@@ -15,7 +12,7 @@ app.use(express.urlencoded({ extended: true }))
 
 // endpoint "home"
 app.get('/', (req, res, next) => {
-  fsPromises.readDir(POSTS_DIR)
+  Post.listar()
     .then(posts => res.render('home', { posts }))
     .catch(error => next(error))
 })
@@ -27,16 +24,16 @@ app.get('/nuevo', (req, res) => {
 
 // endpoint que guarda el post
 app.post('/nuevo', (req, res, next) => {
-  fsPromises.writeFile(POSTS_DIR + '/' + req.body.titulo, req.body.cuerpo)
+  const post = new Post(req.body.titulo, req.body.cuerpo)
+  post.guardar()
     .then(() => res.redirect('/'))
     .catch(err => next(err))
 })
 
 // endpoint de vista de detalle de un post
 app.get('/posts/:id', (req, res, next) => {
-  const titulo = req.params.id
-  fsPromises.readFile(POSTS_DIR + '/' + titulo)
-    .then(cuerpo => res.render('post', { post: { titulo, cuerpo }}))
+  Post.buscarPorId(req.params.id)
+    .then(post => res.render('post', { post }))
     .catch(err => next(err))
 })
 
