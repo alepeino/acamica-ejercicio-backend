@@ -1,4 +1,5 @@
 const express = require('express')
+const nuevoPostController = require('./controllers/nuevoPost')
 const Post = require('./models/Post')
 
 const PORT = 3000
@@ -17,25 +18,14 @@ app.get('/', (req, res, next) => {
     .catch(error => next(error))
 })
 
-// endpoint que envía el formulario de crear post
-app.get('/nuevo', (req, res) => {
-  res.render('form')
-})
-
-// endpoint que guarda el post
-app.post('/nuevo', (req, res, next) => {
-  const post = new Post(req.body.titulo, req.body.cuerpo)
-  post.guardar()
-    .then(() => res.redirect('/'))
-    .catch(err => next(err))
-})
-
 // endpoint de vista de detalle de un post
 app.get('/posts/:id', (req, res, next) => {
   Post.buscarPorId(req.params.id)
     .then(post => res.render('post', { post }))
     .catch(err => next(err))
 })
+
+app.use('/nuevo', nuevoPostController)
 
 // middleware que maneja las peticiones
 // que no matchean con las rutas declaradas.
