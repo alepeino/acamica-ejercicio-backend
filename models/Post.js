@@ -1,8 +1,4 @@
-const fsPromises = require('../fs-promises')
-
-const POSTS_DIR = 'posts'
-
-fsPromises.ensureDir(POSTS_DIR)
+const query = require('../bd')
 
 class Post {
   constructor (titulo, cuerpo) {
@@ -11,18 +7,21 @@ class Post {
   }
 
   guardar () {
-    return fsPromises.writeFile(POSTS_DIR + '/' + this.titulo, this.cuerpo)
+    return query(
+      'INSERT INTO posts (titulo, cuerpo) VALUES (?, ?)',
+      [this.titulo, this.cuerpo]
+    )
   }
 
   static listar () {
-    return fsPromises.readDir(POSTS_DIR)
-      .then(titulos => titulos.map(titulo => new Post(titulo, null)))
+    return query('SELECT id, titulo FROM posts')
   }
 
   static buscarPorId (id) {
-    const titulo = id
-    return fsPromises.readFile(POSTS_DIR + '/' + titulo)
-      .then(cuerpo => new Post(titulo, cuerpo))
+    return query('SELECT * FROM posts WHERE id = ?', [id])
+      .then(posts => {
+        return posts[0]
+      })
   }
 }
 
